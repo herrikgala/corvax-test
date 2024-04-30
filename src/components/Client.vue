@@ -1,4 +1,5 @@
 <template>
+  <h2>Client</h2>
   <Suspense>
     <template #default>
       <div>

@@ -1,24 +1,33 @@
 <script setup>
-import Main from './components/Main.vue';
+
+import { RouterLink, RouterView } from 'vue-router';
 </script>
 
 <template>
-  <Main />
+  <nav class="nav">
+    <RouterLink to="/client">Go to Client</RouterLink>
+    <RouterLink to="/admin">Go to Admin</RouterLink>
+  </nav>
+  <RouterView />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background-color: purple;
+  color: rgb(240, 240, 240);
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.nav>* {
+  margin: 0 1rem;
+  color: rgb(240, 240, 240);
+  text-decoration: none;
 }
 </style>
