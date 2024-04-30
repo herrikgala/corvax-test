@@ -1,0 +1,8 @@
+{
+    "templates": [
+        {
+            "template": "<div class='card-wrapper'><img class='card-image' :src='imageUrl' /><h3>{{ cardTitle }}</h3><p>{{ cardText}}</p><button class='card-button'>Button</button></div>",
+            "style": "background-color: #f0f0f0; padding: 10px; margin: 10px; border: 1px solid #ccc;"
+        }
+    ]
+}
