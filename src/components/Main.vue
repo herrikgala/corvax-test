@@ -21,8 +21,8 @@ const dynamicComponent = shallowRef(null);
 const isLoading = ref(true);
 
 const data = reactive({
-  imageUrl: 'asd',
-  cardTitle: 'asd',
+  imageUrl: '',
+  cardTitle: '',
   cardText: ''
 });
 
