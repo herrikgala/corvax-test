@@ -17,9 +17,9 @@
 <script setup>
 import { defineAsyncComponent, ref, watchEffect, watch, shallowRef, reactive, toRefs } from 'vue';
 import axios from 'axios';
+import defaultTemplate from '../default.json'
 
 const dynamicComponent = shallowRef(null);
-const isLoading = ref(true);
 
 const data = reactive({
   imageUrl: '',
@@ -29,26 +29,28 @@ const data = reactive({
 
 const fetchSettingsAndData = async () => {
   // Fetch settings and data from API
-  const settingsResponse = await axios.get('api/template');
-  const templateResponse = settingsResponse.data.templates[0];
+  const templateResponse = await axios.get('api/template');
   const dataResponse = await axios.get('api/data');
 
-  attachStyle(templateResponse.style);
+  // NOTE: changing to default settings if not found in template.json
+  if (!templateResponse.data.template || !templateResponse.data.style) {
+    templateResponse.data.template = defaultTemplate.template;
+    templateResponse.data.style = defaultTemplate.style;
+  }
+  attachStyle(templateResponse.data.style);
 
   data.imageUrl = dataResponse.data.imageUrl;
   data.cardTitle = dataResponse.data.cardTitle;
   data.cardText = dataResponse.data.cardText;
-  isLoading.value = false;
 
   // Create dynamic component
   dynamicComponent.value = defineAsyncComponent(() => {
     return new Promise((resolve, reject) => {
       resolve({
-        template: templateResponse.template,
+        template: templateResponse.data.template,
         data() {
           return {
             ...toRefs(data),
-            isLoading
           };
         },
       })

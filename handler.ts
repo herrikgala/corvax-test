@@ -5,7 +5,10 @@ import { fileURLToPath } from "url";
 
 async function handleGetTemplate(req, res, next) {
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  const data = readFileSync(join(__dirname, "./template.json"), "utf-8");
+  const data = readFileSync(
+    join(__dirname, "./mock_backend/template.json"),
+    "utf-8"
+  );
   res.setHeader("Content-Type", "application/json");
 
   res.end(data);
@@ -15,7 +18,10 @@ function handlePostTemplate() {}
 
 function handleGetData(req, res, next) {
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  const data = readFileSync(join(__dirname, "./data.json"), "utf-8");
+  const data = readFileSync(
+    join(__dirname, "./mock_backend/data.json"),
+    "utf-8"
+  );
   res.setHeader("Content-Type", "application/json");
 
   res.end(data);
