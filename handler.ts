@@ -1,7 +1,8 @@
 import type { Handler } from "vite-plugin-mix";
-import { readFileSync } from "fs";
-import { join, dirname } from "path";
+import { readFileSync, writeFileSync } from "fs";
+import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
+import getRawBody from "raw-body";
 
 async function handleGetTemplate(req, res, next) {
   const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -14,7 +15,29 @@ async function handleGetTemplate(req, res, next) {
   res.end(data);
 }
 
-function handlePostTemplate() {}
+async function handlePostTemplate(req, res, next) {
+  let requestBody;
+  try {
+    requestBody = await getRawBody(req, {
+      length: req.headers["content-length"],
+      limit: "1mb",
+      encoding: true,
+    });
+    const parsedBody = JSON.parse(requestBody);
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    // Writing template
+    writeFileSync(
+      resolve(__dirname, "./mock_backend/template.json"),
+      JSON.stringify(parsedBody, null, 2)
+    );
+
+    res.end("saved");
+  } catch (err) {
+    console.error(err);
+    res.statusCode = 500;
+    return res.end("Internal Server Error");
+  }
+}
 
 function handleGetData(req, res, next) {
   const __dirname = dirname(fileURLToPath(import.meta.url));

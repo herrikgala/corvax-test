@@ -1,0 +1,4 @@
+{
+  "template": "<div class='card-wrapper'><img class='card-image' alt='unsplash image' :src='imageUrl' /><h3>{{ cardTitle }}</h3><p>{{ cardText}}</p><button class='card-button'>AButton</button></div>",
+  "style": ".card-wrapper { width: 28rem; padding: 2rem; background-color: rgb(240,240,240); border: 1px solid purple} .card-image {height: auto; width: 100%; } .card-button { background-color: purple; color: white; padding: 0.5rem 2rem; border-radius: 0.2rem; outline: none; border: none; cursor: pointer }"
+}

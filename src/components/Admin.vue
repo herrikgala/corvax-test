@@ -5,8 +5,8 @@
             <label for="vuejscode">Vue js code</label>
             <textarea id="vuejscode" v-model="templateCode"></textarea>
 
-            <label for="csscode">CSS code</label>
-            <textarea id="csscode" v-model="cssCode"></textarea>
+            <label for="styleCode">CSS code</label>
+            <textarea id="styleCode" v-model="styleCode"></textarea>
 
             <button @click="saveTemplate" class="save-button">Save</button>
         </div>
@@ -32,7 +32,7 @@ import defaultTemplate from '../default.json'
 
 // START: For admin
 const templateCode = ref('');
-const cssCode = ref('');
+const styleCode = ref('');
 // END: For admin
 
 
@@ -56,7 +56,7 @@ const fetchSettingsAndData = async () => {
     }
     attachStyle(templateResponse.data.style);
     templateCode.value = templateResponse.data.template;
-    cssCode.value = templateResponse.data.style;
+    styleCode.value = templateResponse.data.style;
 
     // Setting data
     data.imageUrl = dataResponse.data.imageUrl;
@@ -77,6 +77,23 @@ const fetchSettingsAndData = async () => {
         })
     })
 };
+
+async function saveTemplate() {
+    try {
+        await postSettngs(templateCode.value, styleCode.value);
+        // TODO: this is place to improve but it's just for demo so performance is not a big deal
+        fetchSettingsAndData();
+    } catch (error) {
+        console.log(error);
+    }
+}
+const postSettngs = async (template, style) => {
+    return await axios.post('api/template', {
+        template,
+        style
+    });
+}
+
 function attachStyle(style) {
     // Create a new style element
     const styleElement = document.createElement('style');
