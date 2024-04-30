@@ -1,10 +1,14 @@
 <template>
   <Suspense>
     <template #default>
-      <component :is="dynamicComponent" />
+      <div>
+        <component :is="dynamicComponent" />
+      </div>
     </template>
     <template #fallback>
-      <div style="color: red; font-size: 36px">Loading...</div>
+      <div>
+        <div style="color: red; font-size: 36px">Loading...</div>
+      </div>
     </template>
   </Suspense>
 </template>
@@ -28,6 +32,8 @@ const fetchSettingsAndData = async () => {
   const templateResponse = settingsResponse.data.templates[0];
   const dataResponse = await axios.get('api/data');
 
+  attachStyle(templateResponse.style);
+
   data.imageUrl = dataResponse.data.imageUrl;
   data.cardTitle = dataResponse.data.cardTitle;
   data.cardText = dataResponse.data.cardText;
@@ -48,16 +54,18 @@ const fetchSettingsAndData = async () => {
     })
   })
 };
+function attachStyle(style) {
+  // Create a new style element
+  const styleElement = document.createElement('style');
 
+  // Set the innerHTML of the style element to the style text
+  styleElement.innerHTML = style;
+
+  // Append the style element to the head of the document
+  document.head.appendChild(styleElement);
+}
 watchEffect(() => {
   fetchSettingsAndData();
 });
 
-watch(data, (newData) => {
-  if (newData) {
-    console.log(newData);
-  } else {
-    console.log('Loaded!');
-  }
-});
 </script>
