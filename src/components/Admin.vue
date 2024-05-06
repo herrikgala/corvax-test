@@ -10,79 +10,29 @@
 
             <button @click="saveTemplate" class="save-button">Save</button>
         </div>
-        <Suspense>
-            <template #default>
-                <div>
-                    <component :is="dynamicComponent" />
-                </div>
-            </template>
-            <template #fallback>
-                <div>
-                    <div style="color: red; font-size: 36px">Loading...</div>
-                </div>
-            </template>
-        </Suspense>
+        <Card @load="handleLoad" :refresh="refresh"/>
     </div>
 </template>
 
 <script setup>
-import { defineAsyncComponent, ref, watchEffect, watch, shallowRef, reactive, toRefs, computed } from 'vue';
+import {  ref } from 'vue';
 import axios from 'axios';
-import defaultTemplate from '../default.json'
+import Card from './Card.vue';
 
-// START: For admin
 const templateCode = ref('');
 const styleCode = ref('');
-// END: For admin
 
+const refresh = ref(false);
 
-const dynamicComponent = shallowRef(null);
-
-const data = reactive({
-    imageUrl: '',
-    cardTitle: '',
-    cardText: ''
-});
-
-const fetchSettingsAndData = async () => {
-    // Fetch settings and data from API
-    const templateResponse = await axios.get('api/template');
-    const dataResponse = await axios.get('api/data');
-
-    // NOTE: changing to default settings if not found in template.json
-    if (!templateResponse.data.template || !templateResponse.data.style) {
-        templateResponse.data.template = defaultTemplate.template;
-        templateResponse.data.style = defaultTemplate.style;
-    }
-    attachStyle(templateResponse.data.style);
-    templateCode.value = templateResponse.data.template;
-    styleCode.value = templateResponse.data.style;
-
-    // Setting data
-    data.imageUrl = dataResponse.data.imageUrl;
-    data.cardTitle = dataResponse.data.cardTitle;
-    data.cardText = dataResponse.data.cardText;
-
-    // Create dynamic component
-    dynamicComponent.value = defineAsyncComponent(() => {
-        return new Promise((resolve, reject) => {
-            resolve({
-                template: templateResponse.data.template,
-                data() {
-                    return {
-                        ...toRefs(data),
-                    };
-                },
-            })
-        })
-    })
-};
+function handleLoad(template, style){
+    templateCode.value = template;
+    styleCode.value = style;
+}
 
 async function saveTemplate() {
     try {
         await postSettngs(templateCode.value, styleCode.value);
-        // TODO: this is place to improve but it's just for demo so performance is not a big deal
-        fetchSettingsAndData();
+        refresh.value = !refresh.value;
     } catch (error) {
         console.log(error);
     }
@@ -92,21 +42,7 @@ const postSettngs = async (template, style) => {
         template,
         style
     });
-}
-
-function attachStyle(style) {
-    // Create a new style element
-    const styleElement = document.createElement('style');
-
-    // Set the innerHTML of the style element to the style text
-    styleElement.innerHTML = style;
-
-    // Append the style element to the head of the document
-    document.head.appendChild(styleElement);
-}
-watchEffect(() => {
-    fetchSettingsAndData();
-});
+};
 
 </script>
 
